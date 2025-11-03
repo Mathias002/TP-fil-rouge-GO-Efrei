@@ -49,7 +49,7 @@ TP-fil-rouge-GO-efrei/
 
 ```bash
 git clone https://github.com/Mathias002/TP-fil-rouge-GO-efrei.git
-cd TP-fil-rouge-GO-efrei
+cd TP-fil-rouge-GO-efrei/cmd/api
 ```
 
 ### Compiler le projet
