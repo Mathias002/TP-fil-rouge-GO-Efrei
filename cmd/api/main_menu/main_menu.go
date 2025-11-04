@@ -13,12 +13,14 @@ type optionSelected uint
 func Main_menu() optionSelected {
 
 	// Texte menu principal
+	fmt.Println()
 	fmt.Println("--- Mini CRM ---")
 	fmt.Println("1. Ajouter un contact")
 	fmt.Println("2. Lister les contacts")
-	fmt.Println("3. Modifier un contact")
-	fmt.Println("4. Supprimer un contact")
-	fmt.Println("5. Quitter")
+	fmt.Println("3. Afficher un contact")
+	fmt.Println("4. Modifier un contact")
+	fmt.Println("5. Supprimer un contact")
+	fmt.Println("6. Quitter")
 
 	// reader pour retourner le choix de l'utilisateur.rice
 	reader := bufio.NewReader(os.Stdin)
