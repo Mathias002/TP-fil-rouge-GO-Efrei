@@ -44,7 +44,7 @@ func main() {
 				contact.AddContact()
 			// Affichage des contacts 
 			case 2:
-				contact.DisplayContacts()
+				contact.Contacts.DisplayContacts()
 			// Mise à jour d'un contact
 			case 3:
 				contact.UpdateContact()
