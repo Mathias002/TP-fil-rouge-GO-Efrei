@@ -7,7 +7,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
-	"github.com/Mathias002/TP-fil-rouge-GO-efrei/cmd/api/main_menu"
+	"github.com/Mathias002/TP-fil-rouge-GO-efrei/internal/main_menu"
 	storage "github.com/Mathias002/TP-fil-rouge-GO-efrei/internal/store"
 )
 
