@@ -7,9 +7,9 @@ type ContactsType map[IDContact]Contact
 
 // Définition d'une structure "Contact"
 type Contact struct {
-	ID    IDContact
-	Name  NameContact
-	Email EmailContact
+	ID    IDContact    `json:"id" binding:"required"`
+	Name  NameContact  `json:"name" binding:"required"`
+	Email EmailContact `json:"email" binding:"required,email"`
 }
 
 type Storer interface {
