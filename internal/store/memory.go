@@ -12,25 +12,25 @@ type MemoryStore struct {
 }
 
 func NewMemoryStore() *MemoryStore {
+	rand.Seed(time.Now().UnixNano())
 	return &MemoryStore{
 		contacts: make(map[IDContact]*Contact),
 	}
 }
 
-func randomInteger() IDContact {
-	rand.Seed(time.Now().UnixNano())
+func (ms *MemoryStore) randomInteger() IDContact {
 	return IDContact(rand.Intn(10000))
 }
 
 func (ms *MemoryStore) AddContact(contact *Contact) error {
-	contact.ID = randomInteger()
+	contact.ID = ms.randomInteger()
 	ms.contacts[contact.ID] = contact
 	return nil
 }
 
 func (ms *MemoryStore) DisplayContacts() ([]*Contact, error) {
 	if len(ms.contacts) == 0 {
-		return nil, errors.New("aucun contact :/")
+		return nil, errors.New("aucun contact... vous n'avez pas d'amis")
 	}
 
 	contacts := make([]*Contact, 0, len(ms.contacts))
@@ -67,12 +67,12 @@ func (ms *MemoryStore) UpdateContact(idContact IDContact, newName NameContact, n
 }
 
 func (ms *MemoryStore) DeleteContact(idContact IDContact) error {
-    contactToDelete, exists := ms.contacts[IDContact(idContact)]
+	contactToDelete, exists := ms.contacts[IDContact(idContact)]
 	if !exists {
 		return fmt.Errorf("le contact avec l'ID %d n'existe pas", idContact)
 	}
 
-    delete(ms.contacts, contactToDelete.ID)
+	delete(ms.contacts, contactToDelete.ID)
 
-    return nil
+	return nil
 }
