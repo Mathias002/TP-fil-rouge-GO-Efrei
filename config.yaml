@@ -1,0 +1,4 @@
+storage:
+  # type: json
+  type: memory 
+  file: contacts.json
