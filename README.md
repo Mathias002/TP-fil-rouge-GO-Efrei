@@ -306,6 +306,20 @@ ls config.yaml
 
 C'est normal ! Le mode `memory` est **éphémère**. Utilisez `json` ou `gorm` pour la persistance.
 
+### Lecture du fichier .db SQLite
+
+Vous avez deux options pour consulter le contenu de votre fichier SQLite :
+
+#### Option 1 : Visualisation en ligne
+Rendez-vous sur [ce site](https://sqliteviewer.app) qui permet de lire le contenu d'un fichier `.db` directement dans votre navigateur.
+
+#### Option 2 : Extension IDE
+Si vous utilisez un IDE compatible avec les extensions (comme VS Code), installez une extension dédiée à la lecture de bases de données SQLite.
+
+**Exemple avec VS Code :**
+
+![Exemple de visualisation SQLite dans VS Code](https://github.com/user-attachments/assets/620c734c-b35b-4360-90cd-abe37c1112fd)
+
 ## 👥 Auteur
 
 **Mathias002** - Étudiant M2 EFREI  
