@@ -1,222 +1,320 @@
-# Mini CRM en Ligne de Commande 📇
+# 📇 TP Fil Rouge GO - Mini CRM en Ligne de Commande
 
-Un gestionnaire de contacts simple et efficace développé en Go, permettant de gérer vos contacts via une interface en ligne de commande interactive ou par flags.
+Un gestionnaire de contacts robuste et modulaire développé en Go, offrant plusieurs modes de stockage et une interface en ligne de commande.
 
-## 📋 Fonctionnalités
+![Go Version](https://img.shields.io/badge/Go-1.25.3-00ADD8?style=flat&logo=go)
+![EFREI](https://img.shields.io/badge/EFREI-M2-blue)
 
-- ✅ **Menu interactif** en boucle pour une navigation intuitive
-- ➕ **Ajouter un contact** (génération automatique d'ID unique)
-- 📋 **Lister tous les contacts** avec affichage formaté
-- ✏️ **Mettre à jour un contact** (nom et/ou email)
-- 🗑️ **Supprimer un contact** par son ID
-- 🚀 **Ajout via flags** pour une utilisation en ligne de commande
-- 🔄 **Contacts par défaut** chargés au démarrage
+## 🎯 Fonctionnalités
 
-## 🛠️ Concepts Go utilisés
+- ✅ **CRUD complet** : Créer, Lire, Mettre à jour et Supprimer des contacts
+- 🔄 **Multi-stockage** : 3 modes de persistance au choix
+  - **Memory** : Stockage en mémoire (éphémère) avec menu interactif
+  - **JSON** : Persistance dans un fichier `contacts.json`
+  - **GORM/SQLite** : Base de données SQL robuste dans `contacts.db`
+- ⚙️ **Configuration externe** : Changez de mode de stockage sans recompiler grâce à Viper
+- 🎨 **CLI professionnelle** : Interface en ligne de commande intuitive via Cobra
+- ✏️ **Mode interactif** : Menu infini pour gérer vos contacts en mémoire
+- ✉️ **Validation** : Vérification du format d'email
 
-Ce projet met en pratique les concepts fondamentaux de Go :
-
-- `comma ok idiom` - Vérification d'existence dans les maps
-- `for { }` - Boucle infinie pour le menu principal
-- `switch` - Gestion des choix utilisateur
-- `map` - Stockage des contacts avec accès rapide par ID
-- `if err != nil` - Gestion des erreurs
-- `strconv` - Conversion de types (string ↔ int)
-- `os.Stdin` - Lecture des entrées utilisateur
-- `bufio` - Lecture optimisée avec buffer
-- `flag` - Parsing des arguments en ligne de commande
-
-## 📁 Structure du projet
+## 📁 Architecture du projet
 
 ```
-TP-fil-rouge-GO-efrei/
-├── main.go              # Point d'entrée de l'application
-├── contact/
-│   └── contact.go       # Logique de gestion des contacts
-├── main_menu/
-│   └── main_menu.go     # Affichage et gestion du menu
-├── go.mod               # Gestion des dépendances
-└── README.md            # Documentation
+TP-fil-rouge-GO-Efrei/
+├── cmd/
+│   ├── utils/
+│   │   └── validation.go      # Validation des entrées
+│   ├── add.go                  # Commande d'ajout
+│   ├── delete.go               # Commande de suppression
+│   ├── get.go                  # Affichage d'un contact
+│   ├── interactive.go          # Mode interactif (memory)
+│   ├── list.go                 # Liste des contacts
+│   ├── root.go                 # Commande racine + init
+│   └── update.go               # Mise à jour de contact
+├── internal/
+│   ├── config/
+│   │   └── config.go           # Gestion config Viper
+│   ├── database/
+│   │   └── db.go               # Connexion GORM
+│   ├── main_menu/
+│   │   └── main_menu.go        # Menu interactif
+│   └── store/
+│       ├── storage.go          # Interface Storer
+│       ├── gorm.go             # Store GORM/SQLite
+│       ├── json.go             # Store JSON
+│       └── memory.go           # Store Memory
+├── config.yaml                 # Configuration
+├── main.go                     # Point d'entrée
+├── go.mod
+└── README.md
 ```
 
 ## 🚀 Installation
 
 ### Prérequis
 
-- Go 1.21 ou supérieur installé sur votre machine
+- Go 1.25.3 ou supérieur
+- Git
 
 ### Cloner le projet
 
 ```bash
-git clone https://github.com/Mathias002/TP-fil-rouge-GO-efrei.git
-cd TP-fil-rouge-GO-efrei/cmd/api
+git clone https://github.com/Mathias002/TP-fil-rouge-GO-Efrei.git
+cd TP-fil-rouge-GO-Efrei
 ```
 
-### Compiler le projet
+### Installer les dépendances
 
 ```bash
-go build -o crm main.go
+go mod download
 ```
+
+### Compiler l'application
+
+```bash
+go build -o crm-fil-rouge.exe .
+```
+
+## ⚙️ Configuration
+
+Le fichier `config.yaml` permet de configurer le mode de stockage :
+
+```yaml
+storage:
+  # Choisir le type de stockage (memory | json | gorm)
+  type: gorm
+  
+  # Fichier pour le stockage JSON
+  file: contacts.json
+
+database:
+  # Fichier de la base de données SQLite
+  name: contacts.db
+```
+
+### Types de stockage disponibles
+
+| Type | Description | Persistance | Fichier |
+|------|-------------|-------------|---------|
+| `memory` | Stockage en mémoire | ❌ Non | - |
+| `json` | Fichier JSON | ✅ Oui | `contacts.json` |
+| `gorm` | Base SQLite via GORM | ✅ Oui | `contacts.db` |
 
 ## 💻 Utilisation
 
-### Mode interactif
+### Mode interactif (Memory)
 
-Lancez l'application sans arguments pour accéder au menu interactif :
-
-```bash
-go run main.go
-```
-
-ou si vous avez compilé :
+Lance un menu interactif pour gérer les contacts en mémoire :
 
 ```bash
-./crm
-```
+# Dans config.yaml : storage.type = memory
+./crm-fil-rouge.exe interact
 
-**Menu principal :**
-
-```
---- Mini CRM ---
+--- Menu CRM ---
 1. Ajouter un contact
 2. Lister les contacts
 3. Modifier un contact
 4. Supprimer un contact
 5. Quitter
-Votre choix :
+Votre choix: 1
+
+Entrez le nom du contact: David
+Entrez l'email du contact: david@test.com
+✅ Contact ajouté!
+
+# Les données sont perdues à la fermeture du programme
 ```
 
-### Mode ligne de commande (flags)
+### Commandes CLI (JSON / GORM)
 
-Ajoutez un contact directement via des flags :
+#### Ajouter un contact
 
 ```bash
-go run main.go -name "Jean Dupont" -email "jean.dupont@example.com"
+# Avec flags
+./crm-fil-rouge.exe add --name "Alice Martin" --email "alice.martin@example.com"
+
+# Mode interactif (demande nom et email)
+./crm-fil-rouge.exe add
 ```
 
-**Flags disponibles :**
+#### Lister tous les contacts
 
-- `-name` : Nom du contact (obligatoire)
-- `-email` : Email du contact (obligatoire)
+```bash
+./crm-fil-rouge.exe list
+```
+
+**Sortie :**
+```
+--- Liste des contacts ---
+ID: 1 | Nom: Alice Martin | Email: alice.martin@example.com
+ID: 2 | Nom: Bob Dupont | Email: bob.dupont@example.com
+```
+
+#### Afficher un contact spécifique
+
+```bash
+./crm-fil-rouge.exe get --id 1
+```
+
+#### Mettre à jour un contact
+
+```bash
+# Avec flags (les champs non fournis sont demandés)
+./crm-fil-rouge.exe update --id 1 --name "Alice Durand"
+
+# Mode interactif complet
+./crm-fil-rouge.exe update --id 1
+```
+
+#### Supprimer un contact
+
+```bash
+./crm-fil-rouge.exe delete --id 1
+```
 
 ## 📖 Exemples d'utilisation
 
-### Ajouter un contact (mode interactif)
+### Workflow complet avec JSON
 
-```
-Votre choix : 1
+```bash
+# 1. Configurer le mode JSON dans config.yaml
+# storage.type: json
 
---- Ajout d'un contact ---
-Entrez le nom du contact :
-Alice Martin
-Entrez l'adresse email du contact :
-alice.martin@example.com
+# 2. Ajouter des contacts
+./crm-fil-rouge.exe add --name "Alice" --email "alice@test.com"
+./crm-fil-rouge.exe add --name "Bob" --email "bob@test.com"
 
-Contact ajouté :
-ID: 7234 | Nom: Alice Martin | Email: alice.martin@example.com
-```
+# 3. Lister les contacts
+./crm-fil-rouge.exe list
+# ID: 1234 | Nom: Alice | Email: alice@test.com
+# ID: 5678 | Nom: Bob | Email: bob@test.com
 
-### Lister les contacts
+# 4. Modifier un contact
+./crm-fil-rouge.exe update --id 1234 --email "alice.martin@test.com"
 
-```
-Votre choix : 2
+# 5. Supprimer un contact
+./crm-fil-rouge.exe delete --id 5678
 
---- Liste des contacts ---
-ID: 7234 | Name: Alice Martin | Email: alice.martin@example.com
-ID: 9175 | Name: Poipoi | Email: poipoi@gmail.com
-ID: 5241 | Name: Lala | Email: lala@gmail.com
+# Le fichier contacts.json est automatiquement mis à jour
 ```
 
-### Modifier un contact
+## 🛠️ Technologies utilisées
+
+- **[Go 1.25.3](https://golang.org/)** - Langage de programmation
+- **[Cobra](https://github.com/spf13/cobra)** - Framework CLI
+- **[Viper](https://github.com/spf13/viper)** - Gestion de configuration
+- **[GORM](https://gorm.io/)** - ORM pour Go
+- **[SQLite](https://www.sqlite.org/)** - Base de données embarquée
+
+## 🏗️ Concepts Go utilisés
+
+Ce projet met en pratique les concepts avancés de Go :
+
+- ✅ **Interfaces** - Architecture modulaire avec `Storer`
+- ✅ **Injection de dépendances** - Découplage via interfaces
+- ✅ **Struct et méthodes** - POO en Go
+- ✅ **Gestion d'erreurs** - `if err != nil`
+- ✅ **Package organization** - Structure de projet professionnelle
+- ✅ **JSON marshaling/unmarshaling** - Sérialisation
+- ✅ **ORM patterns** - GORM avec SQLite
+- ✅ **Configuration externe** - Viper YAML
+- ✅ **CLI patterns** - Cobra commands et flags
+
+## 📊 Schéma de l'architecture
 
 ```
-Votre choix : 3
-
---- Liste des contacts ---
-ID: 7234 | Name: Alice Martin | Email: alice.martin@example.com
-
---- Mettre à jour un contact ---
-Entrez l'ID du contact à mettre à jour:
-7234
---- Début de la modification des informations de l'utilisateur.rice avec l'ID 7234 ---
-
-Entrez le nouveau nom de l'utilisateur.rice (vide si pas de changement)
-Alice Durand
-Entrez le nouveau email de l'utilisateur.rice (vide si pas de changement)
-
- ✅✅✅ Utilisateur.rice avec l'ID 7234 modifié.e avec succés ✅✅✅
+┌─────────────┐
+│   main.go   │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────────┐
+│   cmd/root.go   │ ◄─── Viper (config.yaml)
+└────────┬────────┘
+         │
+         ├──► cmd/add.go
+         ├──► cmd/list.go
+         ├──► cmd/update.go
+         ├──► cmd/delete.go
+         └──► cmd/interactive.go
+                │
+                ▼
+         ┌──────────────┐
+         │ Storer (interface)
+         └──────┬───────┘
+                │
+    ┌───────────┼───────────┐
+    ▼           ▼           ▼
+┌─────────┐ ┌─────────┐ ┌─────────┐
+│ Memory  │ │  JSON   │ │  GORM   │
+│ Store   │ │ Store   │ │ Store   │
+└─────────┘ └─────────┘ └─────────┘
+     │           │           │
+     ▼           ▼           ▼
+  (RAM)   contacts.json  contacts.db
 ```
 
-### Supprimer un contact
+## 🎓 Progression du projet
 
-```
-Votre choix : 4
+### ✅ Étape 1 : Base sans persistance
+- Structure de données avec `map`
+- CRUD basique en mémoire
 
---- Supprimer un contact ---
-Entrez l'ID du contact à supprimer:
-7234
+### ✅ Étape 2 : Architecture modulaire
+- 2.1 : Ajout de `struct` pour la modélisation
+- 2.2 : Interface `Storer` pour la modularité
 
- ✅✅✅ Utilisateur.rice avec l'ID 7234 supprimé.e avec succés ✅✅✅
-```
+### ✅ Étape 3 : CLI et persistance
+- 3.1 : Transformation en CLI avec Cobra
+- 3.2 : Persistance JSON
 
-## 🏗️ Architecture
+### ✅ Étape 4 : Base de données
+- Intégration de GORM avec SQLite
 
-### Types personnalisés
+### ✅ Étape 5 : Configuration externe
+- Gestion de config avec Viper
 
-```go
-type IDContact int
-type NameContact string
-type EmailContact string
+## 🔮 Améliorations futures possibles
 
-type Contact struct {
-    ID    IDContact
-    Name  NameContact
-    Email EmailContact
-}
-```
+- [ ] Export/Import CSV
+- [ ] Recherche avancée (par nom, email, date)
+- [ ] Pagination des résultats
+- [ ] API REST avec Gin
+- [ ] Interface web
+- [ ] Tests unitaires et d'intégration
+- [ ] Chiffrement des données sensibles
 
-### Stockage
+## 🐛 Résolution de problèmes
 
-Les contacts sont stockés dans un `map` global :
+### Le fichier de configuration n'est pas trouvé
 
-```go
-var Contacts map[IDContact]Contact
-```
+```bash
+# Vérifier que config.yaml est à la racine du projet
+ls config.yaml
 
-**Avantages :**
-
-- Accès en O(1) par ID
-- Unicité garantie des IDs
-- Gestion simple des opérations CRUD
-
-### Génération des IDs
-
-Les IDs sont générés aléatoirement entre 0 et 9999 :
-
-```go
-func randomInteger() int {
-    return rand.Intn(10000)
-}
+# Ou spécifier le chemin dans config.go
 ```
 
-## ⚠️ Limitations actuelles
+### Erreur "database is locked" avec SQLite
 
-- Les données sont **stockées en mémoire uniquement** (non persistantes)
-- Pas de vérification du format d'email
-- Possible collision d'IDs (probabilité faible avec 10000 valeurs possibles)
-- Pas de recherche par nom ou email
+```bash
+# Fermer toutes les connexions à la base de données
+# Redémarrer l'application
+```
 
-## 🔮 Améliorations futures
+### Les contacts ne persistent pas en mode memory
 
-- [ ] Persistance des données (JSON, SQLite)
-- [ ] Validation des emails
-- [ ] IDs garantis uniques (UUID ou auto-incrémentation)
-- [ ] Tests unitaires
+C'est normal ! Le mode `memory` est **éphémère**. Utilisez `json` ou `gorm` pour la persistance.
 
 ## 👥 Auteur
 
-**Mathias** - [GitHub](https://github.com/Mathias002)
+**Mathias002** - Étudiant M2 EFREI  
+[GitHub](https://github.com/Mathias002) | [Projet](https://github.com/Mathias002/TP-fil-rouge-GO-Efrei)
 
 ## 📄 Licence
 
-Ce projet est un exercice pédagogique réalisé dans le cadre du cours de Go à l'EFREI.
+Ce projet est un exercice pédagogique réalisé dans le cadre du cours de Go à l'EFREI Paris.
+
+---
+
+**Développé avec ❤️ en Go**
