@@ -100,7 +100,7 @@ func handleAddContact(reader *bufio.Reader, store storage.Storer) {
 	}
 
 	// La suite de la logique d'ajout
-	contact := &storage.Contact{Name: storage.NameContact(name), Email: storage.EmailContact(email)}
+	contact := &storage.Contact{Name: name, Email: email}
 	err = store.AddContact(contact)
 	if err != nil {
 		fmt.Printf("‼️  Erreur: %v\n", err)
@@ -161,7 +161,7 @@ func handleDisplayContact(reader *bufio.Reader, store storage.Storer) {
 		return
 	}
 
-	contact, err := store.DisplayContact(storage.IDContact(idContactParsed))
+	contact, err := store.DisplayContact(idContactParsed)
 	if err != nil {
 		// Erreur
 		fmt.Println()
@@ -257,7 +257,7 @@ func handleUpdateContact(reader *bufio.Reader, store storage.Storer) {
 		break
 	}
 
-	err = store.UpdateContact(storage.IDContact(idContactParsed), storage.NameContact(newName), storage.EmailContact(newEmail))
+	err = store.UpdateContact(idContactParsed, newName, newEmail)
 	if err != nil {
 		fmt.Printf("‼️  Erreur: %v\n", err)
 		fmt.Println()
@@ -308,7 +308,7 @@ func handleDeleteContact(reader *bufio.Reader, store storage.Storer) {
 		break
 	}
 
-	err = store.DeleteContact(storage.IDContact(idContactParsed))
+	err = store.DeleteContact(idContactParsed)
 	if err != nil {
 		fmt.Println()
 		fmt.Printf("‼️  Erreur: %v\n", err)

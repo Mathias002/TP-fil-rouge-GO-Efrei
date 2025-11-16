@@ -7,14 +7,13 @@ import (
 	"os"
 
 	"github.com/Mathias002/TP-fil-rouge-GO-efrei/cmd/utils"
-	storage "github.com/Mathias002/TP-fil-rouge-GO-efrei/internal/store"
 	"github.com/spf13/cobra"
 )
 
 var (
 	idContactUpdate int
-	newNameStr      string
-	newEmailStr     string
+	newName         string
+	newEmail        string
 )
 
 var updateCmd = &cobra.Command{
@@ -23,43 +22,45 @@ var updateCmd = &cobra.Command{
 	Long:  `La commande 'update' permet la modification d'un contact via la saisie de deux champs ; 'name' et 'email'`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		// faire la section interactive, id -> le name puis l'email
-
-		if newNameStr == "" {
+		// On vérifie si le nom à été fourni via les flags de la commande, si non on le demande directement via un reader
+		if newName == "" {
 			fmt.Print("➡️  Renseigner le nouveau nom du contact: ")
 			reader := bufio.NewReader(os.Stdin)
-			newNameStr, err = utils.ReaderLine(reader)
+			newName, err = utils.ReaderLine(reader)
 			if err != nil {
-				log.Fatalf("‼️Erreur de saisi: %v \n", err)
+				log.Fatalf("‼️  Erreur de saisi: %v \n", err)
 			}
 		}
 
-		if newEmailStr == "" {
+		// On vérifie si l'emial à été fourni via les flags de la commande, si non on le demande directement via un reader
+		if newEmail == "" {
 			fmt.Print("➡️  Renseigner le nouveau email du contact: ")
 			reader := bufio.NewReader(os.Stdin)
-			newEmailStr, err = utils.ReaderLine(reader)
+			newEmail, err = utils.ReaderLine(reader)
 			if err != nil {
-				log.Fatalf("‼️Erreur de saisi: %v \n", err)
+				log.Fatalf("‼️  Erreur de saisi: %v \n", err)
 			}
 		}
 
-		if !utils.IsValidEmail(string(newEmailStr)) {
+		// On vérifie si l'email est valide
+		if newEmail != "" && !utils.IsValidEmail(string(newEmail)) {
 			fmt.Println()
-			fmt.Println("‼️Erreur: L'email renseigné n'est pas valide veuillez respecter le format suivant : email.example@gmail.com")
+			fmt.Println("‼️  Erreur: L'email renseigné n'est pas valide veuillez respecter le format suivant : email.example@gmail.com")
 			fmt.Println()
 			return
 		}
 
-		newName := storage.NameContact(newNameStr)
-		newEmail := storage.EmailContact(newEmailStr)
-
-		err := store.UpdateContact(storage.IDContact(idContactUpdate), newName, newEmail)
+		// On appel la func de mise à jour d'un contact en lui passant en paramètre l'id du contact à modifier et les nouvelles informations du contact
+		err := store.UpdateContact(idContactUpdate, newName, newEmail)
+		
+		// Gestion des erreurs
 		if err != nil {
 			fmt.Println()
-			log.Fatalf("‼️Erreur lors de la modification du contact : %v", err)
+			log.Fatalf("‼️  Erreur lors de la modification du contact : %v", err)
 			fmt.Println()
 		}
 
+		// Message de confirmation
 		fmt.Println()
 		fmt.Printf("✅ Mise à jour des informations du contact avec l'ID '%d' effectué avec succés \n", idContactUpdate)
 		fmt.Println()
@@ -71,8 +72,8 @@ func init() {
 
 	// Définition des drapeaux pour la commande 'add'
 	updateCmd.Flags().IntVarP(&idContactUpdate, "id", "i", 0, "Id du contact à mettre à jour")
-	updateCmd.Flags().StringVarP(&newNameStr, "name", "n", "", "Nouveau nom du contact")
-	updateCmd.Flags().StringVarP(&newEmailStr, "email", "e", "", "Nouveau email du contact")
+	updateCmd.Flags().StringVarP(&newName, "name", "n", "", "Nouveau nom du contact")
+	updateCmd.Flags().StringVarP(&newEmail, "email", "e", "", "Nouveau email du contact")
 
 	// Marquer tous les drapeaux comme obligatoires
 	updateCmd.MarkFlagRequired("id")

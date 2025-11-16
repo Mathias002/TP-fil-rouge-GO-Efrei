@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	storage "github.com/Mathias002/TP-fil-rouge-GO-efrei/internal/store"
 	"github.com/spf13/cobra"
 )
 
@@ -16,13 +15,17 @@ var getOneByIdCmd = &cobra.Command{
 	Long:  `La commande 'get' permet la récupération d'un contact via son id avec ses informations tel que : 'id', 'name', 'email'`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		contact, err := store.DisplayContact(storage.IDContact(idContactGet))
+		// On appel la func d'affichage d'un contact en lui passant l'id du contact en paramètre
+		contact, err := store.DisplayContact(idContactGet)
+
+		// Gestion des erreurs 
 		if err != nil {
 			fmt.Println()
-			log.Fatalf("‼️Erreur lors de l'affichage des des informations du contact: %v", err)
+			log.Fatalf("‼️  Erreur lors de l'affichage des informations du contact: %v", err)
 			fmt.Println()
 		}
 
+		// Affichage des informations du contact
 		fmt.Println()
 		fmt.Printf("--- Information du contact avec l'ID: %d ---", idContactGet)
 		fmt.Println()

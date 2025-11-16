@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	storage "github.com/Mathias002/TP-fil-rouge-GO-efrei/internal/store"
 	"github.com/spf13/cobra"
 )
 
@@ -16,13 +15,17 @@ var deleteCmd = &cobra.Command{
 	Long:  `La commande 'delete' permet la suppression d'un contact via son id`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		err := store.DeleteContact(storage.IDContact(idContactDelete))
+		// On appel la func de suppression d'un contact en lui passant l'id du contact a supprimer en paramètre
+		err := store.DeleteContact(idContactDelete)
+
+		// Gestion des erreurs
 		if err != nil {
 			fmt.Println()
-			log.Fatalf("‼️Erreur lors de la suppression du contact : %v", err)
+			log.Fatalf("‼️  Erreur lors de la suppression du contact : %v", err)
 			fmt.Println()
 		}
 
+		// Message de confirmation
 		fmt.Println()
 		fmt.Printf("✅ Le contact avec l'ID '%d' a bien été supprimé \n", idContactDelete)
 		fmt.Println()
