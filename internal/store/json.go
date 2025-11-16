@@ -7,18 +7,17 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-	"time"
 )
 
 type JSONStore struct {
-	contacts map[IDContact]*Contact
+	contacts map[int]*Contact
 	filename string
 }
 
+// Permet de créer le store JSON utilisé pour les différentes opération CRUD et à la persistence des données
 func NewJSONStore(filename string) *JSONStore {
-	rand.Seed(time.Now().UnixNano())
 	store := &JSONStore{
-		contacts: make(map[IDContact]*Contact),
+		contacts: make(map[int]*Contact),
 		filename: filename,
 	}
 
@@ -30,27 +29,34 @@ func NewJSONStore(filename string) *JSONStore {
 	return store
 }
 
-func (js *JSONStore) randomInteger() IDContact {
-	return IDContact(rand.Intn(10000))
+// Permet de générer un nombre aléatoire entre 0 et 9999
+func (js *JSONStore) randomInteger() int {
+	return rand.Intn(10000)
 }
 
+// Permet d'ajouter un contact
 func (js *JSONStore) AddContact(contact *Contact) error {
 
+	// On complète les informations fourni par l'utilisateur (Name | Email)
+	// en générant un id aléatoire et en l'attribuant au nouveau contact
 	contact.ID = js.randomInteger()
-
 	js.contacts[contact.ID] = contact
 
+
+	// Sauvegarde de l'ensemble des contacts au format JSON indenté
 	data, err := json.MarshalIndent(js.contacts, "", "  ")
 	if err != nil {
 		return fmt.Errorf("impossible de marshaller les contacts %s: %w", js.filename, err)
 	}
 
+	// Réécriture du fichier de stockage avec les données JSON
 	if err := os.WriteFile(js.filename, data, 0644); err != nil {
 		return fmt.Errorf("impossible d'écrire dans le fichier %s: %w", js.filename, err)
 	}
 	return nil
 }
 
+// Permet d'afficher tout les contacts
 func (js *JSONStore) DisplayContacts() ([]*Contact, error) {
 
 	// création d'un slice de la taille du map des contacts
@@ -64,8 +70,9 @@ func (js *JSONStore) DisplayContacts() ([]*Contact, error) {
 	return contacts, nil
 }
 
-func (js *JSONStore) DisplayContact(idContact IDContact) (*Contact, error) {
-	contact, exists := js.contacts[IDContact(idContact)]
+// Permet d'afficher un contact via son ID
+func (js *JSONStore) DisplayContact(idContact int) (*Contact, error) {
+	contact, exists := js.contacts[idContact]
 	if !exists {
 		return nil, fmt.Errorf("le contact avec l'ID %d n'existe pas", idContact)
 	}
@@ -73,10 +80,11 @@ func (js *JSONStore) DisplayContact(idContact IDContact) (*Contact, error) {
 	return contact, nil
 }
 
-func (js *JSONStore) UpdateContact(idContact IDContact, newName NameContact, newEmail EmailContact) error {
+// Permet de mettre à jour un contact via son ID
+func (js *JSONStore) UpdateContact(idContact int, newName string, newEmail string) error {
 
 	// On vérifie que le contact existe
-	contactToUpdate, exists := js.contacts[IDContact(idContact)]
+	contactToUpdate, exists := js.contacts[idContact]
 	if !exists {
 		return fmt.Errorf("le contact avec l'ID %d n'existe pas", idContact)
 	}
@@ -103,9 +111,10 @@ func (js *JSONStore) UpdateContact(idContact IDContact, newName NameContact, new
 	return nil
 }
 
-func (js *JSONStore) DeleteContact(idContact IDContact) error {
+// Permet de supprimer un contact via son ID
+func (js *JSONStore) DeleteContact(idContact int) error {
 	// On vérifie que le contact existe
-	contactToDelete, exists := js.contacts[IDContact(idContact)]
+	contactToDelete, exists := js.contacts[idContact]
 	if !exists {
 		return fmt.Errorf("le contact avec l'ID %d n'existe pas", idContact)
 	}
