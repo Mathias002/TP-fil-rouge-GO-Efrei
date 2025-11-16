@@ -1,4 +1,9 @@
 storage:
-  # type: json
-  type: memory 
-  file: contacts.json
+  # type: memory # Pour une utilisation du CRM avec le store en mémoire via le flag `interact` 
+  # type: json # Pour une utilisation du CRM avec une persistence des données en json via le fichier contacts.json 
+  type: gorm # Pour une utilisation du CRM avec une persistence des données dans un base de données SQLite via le fichier contacts.db
+  
+  file: contacts.json # Fichier de persistence des données lors de l'utilisation du type json 
+
+database:
+  name: contacts.db # Nom du fichier de base de données SQLite
